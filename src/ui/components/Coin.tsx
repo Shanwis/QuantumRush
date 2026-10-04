@@ -12,6 +12,7 @@ export interface CoinProps {
   settleFace: 'H' | 'T' | null;
   selected: boolean;
   linkRole: 'control' | null;
+  pickTarget?: boolean;
   flipKey: number;
   onClick: () => void;
 }
@@ -22,6 +23,7 @@ export function Coin({
   settleFace,
   selected,
   linkRole,
+  pickTarget,
   flipKey,
   onClick,
 }: CoinProps) {
@@ -32,6 +34,7 @@ export function Coin({
   const classes = ['coin'];
   if (selected) classes.push('coin--selected');
   if (linkRole === 'control') classes.push('coin--control');
+  if (pickTarget) classes.push('coin--pick-target');
   if (flicker && !reduced && settleFace === null) classes.push('coin--flicker');
 
   let stage: ReactNode;

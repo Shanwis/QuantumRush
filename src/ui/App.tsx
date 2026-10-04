@@ -39,16 +39,31 @@ export function App() {
         <GameScreen
           key={level}
           level={level}
-          onExit={() => {setLevel(null); sfx("click");}}
+          onExit={() => {
+            setLevel(null); 
+            sfx("click");
+          }}
           onScore={onScore}
         />
       ) : tutorial ? (
-        <TutorialScreen onBack={() => {setTutorial(false); sfx("click");} } />
+        <TutorialScreen
+          onBack={() => {
+            setTutorial(false); 
+            sfx("click");
+          }}
+          onPlayLevel={(lv) => {
+            setTutorial(false);
+            setLevel(lv);
+          }}
+        />
       ) : (
         <MenuScreen
           bests={bests}
           onPlay={setLevel}
-          onTutorial={() => {setTutorial(true); sfx("click");}}
+          onTutorial={() => {
+            setTutorial(true); 
+            sfx("click");
+          }}
         />
       )}
     </CrtFrame>
