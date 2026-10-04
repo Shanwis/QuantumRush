@@ -12,7 +12,7 @@ export interface CoinProps {
   settleFace: 'H' | 'T' | null;
   selected: boolean;
   linkRole: 'control' | null;
-  pickTarget?: boolean;
+  pickTarget: boolean;
   flipKey: number;
   onClick: () => void;
 }
