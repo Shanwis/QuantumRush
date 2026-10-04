@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import { useEffect, useMemo, useReducer, useRef, useState, type MouseEvent } from 'react';
 import { sfx, unlockAudio } from '../audio/synth';
 import { generateChallenge, minimalSolution } from '../game/challenge';
 import { reduce, startSession, type GameSession } from '../game/reducer';
@@ -139,6 +139,14 @@ export function GameScreen({ level, onExit, onScore }: GameScreenProps) {
     if (linkArmed) setLinkCtl(i);
   };
 
+  const onScreenPress = (event: MouseEvent<HTMLDivElement>) => {
+    if (linkCtl === null) return;
+    const target = event.target as HTMLElement;
+    if (target.closest('.coin')) return;
+    setLinkCtl(null);
+    sfx('click');
+  };
+
   const onAction = (kind: 'X' | 'H' | 'Z' | 'Y') => apply({ kind, coin: sel });
 
   const onLinkToggle = () => {
@@ -203,7 +211,7 @@ export function GameScreen({ level, onExit, onScore }: GameScreenProps) {
       : 'CLICK A COIN TO SELECT IT';
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4" onClick={onScreenPress}>
       <header className="hud">
         <div className="hud__stat">
           <span className="hud__label">LEVEL</span>
@@ -242,6 +250,7 @@ export function GameScreen({ level, onExit, onScore }: GameScreenProps) {
                 settleFace={settle ? settle[i] : null}
                 selected={sel === i && !linkArmed}
                 linkRole={linkCtl === i ? 'control' : null}
+                pickTarget={linkArmed && linkCtl !== null && linkCtl !== i}
                 flipKey={flipKeys[i]}
                 onClick={() => onCoinClick(i)}
               />
