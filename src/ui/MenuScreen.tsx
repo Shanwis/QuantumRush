@@ -10,9 +10,10 @@ const LEVEL_LABELS: Array<{ level: QubitCount; label: string }> = [
 export interface MenuScreenProps {
   bests: Bests;
   onPlay: (level: QubitCount) => void;
+  onTutorial: () => void;
 }
 
-export function MenuScreen({ bests, onPlay }: MenuScreenProps) {
+export function MenuScreen({ bests, onPlay, onTutorial }: MenuScreenProps) {
   return (
     <div className="menu flex flex-col items-center gap-6 py-8">
       <h1 className="menu__title pixel">QUBIT RUSH</h1>
@@ -32,6 +33,9 @@ export function MenuScreen({ bests, onPlay }: MenuScreenProps) {
             {entry.label}
           </button>
         ))}
+        <button className="btn btn--wide btn--ghost" onClick={onTutorial}>
+          HOW TO PLAY
+        </button>
       </div>
       <section className="panel w-full max-w-md">
         <h2 className="panel__title">HIGH SCORES</h2>

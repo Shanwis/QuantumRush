@@ -560,6 +560,46 @@ body {
   gap: 12px;
 }
 
+.tut-text {
+  margin: 0 0 10px;
+  color: var(--phosphor);
+}
+
+.tut-text:last-child {
+  margin-bottom: 0;
+}
+
+.tut-row {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 2px dashed var(--panel-edge);
+}
+
+.tut-row:last-child {
+  border-bottom: none;
+}
+
+.tut-name {
+  font-family: 'Press Start 2P', 'Courier New', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--amber);
+  padding-top: 4px;
+}
+
+.tut-quantum {
+  color: var(--phosphor-dim);
+}
+
+@media (max-width: 560px) {
+  .tut-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}
+
 .menu {
   text-align: center;
 }

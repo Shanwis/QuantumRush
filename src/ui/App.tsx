@@ -6,9 +6,11 @@ import { CrtFrame } from './components/CrtFrame';
 import { ThemeToggle } from './components/ThemeToggle';
 import { GameScreen } from './GameScreen';
 import { MenuScreen } from './MenuScreen';
+import { TutorialScreen } from './TutorialScreen';
 
 export function App() {
   const [level, setLevel] = useState<QubitCount | null>(null);
+  const [tutorial, setTutorial] = useState(false);
   const [bests, setBests] = useState<Bests>(loadBests);
   const [themeOn, setThemeOn] = useState(() => loadSettings().themeOn);
 
@@ -32,14 +34,20 @@ export function App() {
 
   return (
     <CrtFrame corner={<ThemeToggle themeOn={themeOn} onToggle={toggleTheme} />}>
-      {level === null ? (
-        <MenuScreen bests={bests} onPlay={setLevel} />
-      ) : (
+      {level !== null ? (
         <GameScreen
           key={level}
           level={level}
           onExit={() => setLevel(null)}
           onScore={onScore}
+        />
+      ) : tutorial ? (
+        <TutorialScreen onBack={() => setTutorial(false)} />
+      ) : (
+        <MenuScreen
+          bests={bests}
+          onPlay={setLevel}
+          onTutorial={() => setTutorial(true)}
         />
       )}
     </CrtFrame>
