@@ -574,6 +574,127 @@ body {
   gap: 12px;
 }
 
+.tut-box {
+  background: var(--panel);
+  border: 3px solid var(--amber);
+  box-shadow:
+    0 0 24px rgba(255, 179, 71, 0.2),
+    inset 0 0 30px rgba(0, 0, 0, 0.5);
+  padding: 16px 18px;
+  position: relative;
+}
+
+.tut-box--success {
+  border-color: var(--phosphor);
+  box-shadow:
+    0 0 28px rgba(77, 255, 166, 0.3),
+    inset 0 0 30px rgba(0, 0, 0, 0.5);
+}
+
+.tut-box__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+  border-bottom: 2px dashed var(--panel-edge);
+  padding-bottom: 8px;
+}
+
+.tut-box__badge {
+  font-family: 'Press Start 2P', 'Courier New', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--amber);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tut-box--success .tut-box__badge {
+  color: var(--phosphor);
+}
+
+.tut-box__tag {
+  background: var(--amber);
+  color: var(--ink);
+  padding: 3px 6px;
+  font-size: 8px;
+}
+
+.tut-box--success .tut-box__tag {
+  background: var(--phosphor);
+}
+
+.tut-box__body {
+  font-size: 21px;
+  line-height: 1.35;
+  color: var(--phosphor);
+  margin-bottom: 10px;
+}
+
+.tut-box__quantum {
+  font-size: 18px;
+  color: var(--cyan);
+  background: rgba(87, 215, 255, 0.08);
+  border-left: 3px solid var(--cyan);
+  padding: 8px 12px;
+  margin: 10px 0;
+}
+
+.tut-box__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.tut-step-dots {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.tut-step-dot {
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--panel-edge);
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+}
+
+.tut-step-dot--active {
+  border-color: var(--amber);
+  background: var(--amber);
+  box-shadow: 0 0 8px rgba(255, 179, 71, 0.6);
+}
+
+.tut-step-dot--complete {
+  border-color: var(--phosphor);
+  background: var(--phosphor);
+}
+
+.btn--pulse {
+  animation: pulseGlow 1.2s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%,
+  100% {
+    box-shadow: 4px 4px 0 #000, 0 0 0 rgba(87, 215, 255, 0);
+  }
+  50% {
+    box-shadow:
+      4px 4px 0 #000,
+      0 0 16px rgba(87, 215, 255, 0.7);
+    border-color: var(--cyan);
+  }
+}
+
 .tut-text {
   margin: 0 0 10px;
   color: var(--phosphor);

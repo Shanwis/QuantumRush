@@ -42,7 +42,13 @@ export function App() {
           onScore={onScore}
         />
       ) : tutorial ? (
-        <TutorialScreen onBack={() => setTutorial(false)} />
+        <TutorialScreen
+          onBack={() => setTutorial(false)}
+          onPlayLevel={(lv) => {
+            setTutorial(false);
+            setLevel(lv);
+          }}
+        />
       ) : (
         <MenuScreen
           bests={bests}
