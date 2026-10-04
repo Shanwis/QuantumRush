@@ -233,6 +233,20 @@ body {
   border-color: var(--cyan);
 }
 
+.coin--pick-target {
+  border-style: dashed;
+  border-color: var(--phosphor-dim);
+}
+
+.coin--pick-target:hover,
+.coin--pick-target:focus-visible {
+  border-style: solid;
+  border-color: var(--cyan);
+  box-shadow:
+    0 0 0 2px var(--cyan),
+    0 0 18px rgba(87, 215, 255, 0.35);
+}
+
 .coin:focus-visible {
   outline: 3px solid var(--cyan);
   outline-offset: 3px;

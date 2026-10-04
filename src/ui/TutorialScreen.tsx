@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type MouseEvent } from 'react';
 import { sfx, unlockAudio } from '../audio/synth';
 import {
   COIN_NAMES,
@@ -222,6 +222,14 @@ export function TutorialScreen({ onBack, onPlayLevel }: TutorialScreenProps) {
     if (linkArmed) setLinkCtl(i);
   };
 
+  const onScreenPress = (event: MouseEvent<HTMLDivElement>) => {
+    if (linkCtl === null) return;
+    const target = event.target as HTMLElement;
+    if (target.closest('.coin')) return;
+    setLinkCtl(null);
+    sfx('click');
+  };
+
   const onAction = (kind: 'X' | 'H' | 'Z' | 'Y') => apply({ kind, coin: sel });
 
   const onLinkToggle = () => {
@@ -413,7 +421,7 @@ export function TutorialScreen({ onBack, onPlayLevel }: TutorialScreenProps) {
         </div>
       ) : (
         /* Interactive Guided Practice */
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4" onClick={onScreenPress}>
           {/* Interactive Tutorial Guidance Box */}
           <section className={`tut-box ${isMatched ? 'tut-box--success' : ''}`}>
             <div className="tut-box__header">
@@ -507,6 +515,7 @@ export function TutorialScreen({ onBack, onPlayLevel }: TutorialScreenProps) {
                     settleFace={settle ? settle[i] : null}
                     selected={sel === i && !linkArmed}
                     linkRole={linkCtl === i ? 'control' : null}
+                    pickTarget={linkArmed && linkCtl !== null && linkCtl !== i}
                     flipKey={flipKeys[i]}
                     onClick={() => onCoinClick(i)}
                   />
