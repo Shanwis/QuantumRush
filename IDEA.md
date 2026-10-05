@@ -51,15 +51,15 @@ Example:
 ║             🪙  🪙  🪙               ║
 ║                                      ║
 ║       ┌────────────────────┐         ║
-║       │   ONE COIN         │         ║
-║       └────────────────────┘         ║
-║                                      ║
-║       ┌────────────────────┐         ║
 ║       │   TWO COINS        │         ║
 ║       └────────────────────┘         ║
 ║                                      ║
 ║       ┌────────────────────┐         ║
 ║       │   THREE COINS      │         ║
+║       └────────────────────┘         ║
+║                                      ║
+║       ┌────────────────────┐         ║
+║       │   FOUR COINS       │         ║
 ║       └────────────────────┘         ║
 ║                                      ║
 ║              HIGH SCORES             ║
@@ -71,7 +71,7 @@ The player should be able to choose any unlocked/available level directly.
 
 For V1, **all three levels can be available immediately**.
 
-Do not force the player to complete Level 1 before accessing Level 2 or Level 3.
+Do not force the player to complete Level 2 before accessing Level 3 or Level 4.
 
 The purpose is to let people freely experiment.
 
@@ -82,18 +82,20 @@ The purpose is to let people freely experiment.
 The game consists of:
 
 ```text
-🪙 ONE COIN
 🪙🪙 TWO COINS
 🪙🪙🪙 THREE COINS
+🪙🪙🪙🪙 FOUR COINS
 ```
 
 These correspond to:
 
 ```text
-1 qubit
 2 qubits
 3 qubits
+4 qubits
 ```
+
+Single-coin play is taught inside the HOW TO PLAY tutorial.
 
 Do not prominently use the word "qubit" in the gameplay UI.
 
@@ -618,9 +620,9 @@ The score should be based on:
 More coins = higher score multiplier.
 
 ```text
-1 coin  → ×1
 2 coins → ×2
 3 coins → ×4
+4 coins → ×8
 ```
 
 ### Number of operations
@@ -646,9 +648,9 @@ Instead, maintain local high scores using browser storage.
 Track scores separately for:
 
 ```text
-ONE COIN
 TWO COINS
 THREE COINS
+FOUR COINS
 ```
 
 Example:
@@ -656,13 +658,13 @@ Example:
 ```text
 PERSONAL BEST
 
-ONE COIN
+TWO COINS
 Best:  1240
 
-TWO COINS
+THREE COINS
 Best:  2840
 
-THREE COINS
+FOUR COINS
 Best:  6310
 ```
 
@@ -870,9 +872,9 @@ Do not create a long tutorial.
 The main menu should let the player immediately select:
 
 ```text
-🪙 ONE COIN
 🪙🪙 TWO COINS
 🪙🪙🪙 THREE COINS
+🪙🪙🪙🪙 FOUR COINS
 ```
 
 The game itself should be understandable through its UI.

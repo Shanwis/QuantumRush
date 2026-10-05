@@ -7,12 +7,14 @@ export const K_RANGES: Record<QubitCount, [number, number]> = {
   1: [1, 3],
   2: [2, 5],
   3: [3, 7],
+  4: [3, 8],
 };
 
 export const DEPTH_BANDS: Record<QubitCount, [number, number]> = {
   1: [1, 2],
   2: [2, 4],
   3: [3, 6],
+  4: [3, 8],
 };
 
 export const HISTORY_WINDOW = 8;

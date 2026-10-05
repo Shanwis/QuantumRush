@@ -1,7 +1,16 @@
 import { GATES } from '../quantum/gates';
 import { applyCNOT, applyGate1, type QState } from '../quantum/state';
 
-export type QubitCount = 1 | 2 | 3;
+export type QubitCount = 1 | 2 | 3 | 4;
+
+export const PLAY_LEVELS: readonly QubitCount[] = [2, 3, 4];
+
+export const LEVEL_LABELS: Record<QubitCount, string> = {
+  1: 'ONE COIN',
+  2: 'TWO COINS',
+  3: 'THREE COINS',
+  4: 'FOUR COINS',
+};
 
 export type Op =
   | { kind: 'X' | 'H' | 'Z' | 'Y'; coin: number }
@@ -21,7 +30,7 @@ export function applyOp(s: QState, op: Op): QState {
     : applyGate1(s, GATES[op.kind], op.coin);
 }
 
-export const COIN_NAMES = ['A', 'B', 'C'];
+export const COIN_NAMES = ['A', 'B', 'C', 'D'];
 
 const ACTION_NAMES: Record<string, string> = {
   X: 'FLIP',
@@ -53,6 +62,7 @@ export const LEVEL_ACTIONS: Record<QubitCount, readonly string[]> = {
   1: ['FLIP', 'MIX'],
   2: ['FLIP', 'MIX', 'TURN', 'TWIST', 'LINK'],
   3: ['FLIP', 'MIX', 'TURN', 'TWIST', 'LINK'],
+  4: ['FLIP', 'MIX', 'TURN', 'TWIST', 'LINK'],
 };
 
 export function opLabel(op: Op): string {

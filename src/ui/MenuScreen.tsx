@@ -1,12 +1,6 @@
 import { sfx } from '../audio/synth';
 import type { Bests } from '../game/storage';
-import type { QubitCount } from '../game/types';
-
-const LEVEL_LABELS: Array<{ level: QubitCount; label: string }> = [
-  { level: 1, label: 'ONE COIN' },
-  { level: 2, label: 'TWO COINS' },
-  { level: 3, label: 'THREE COINS' },
-];
+import { LEVEL_LABELS, PLAY_LEVELS, type QubitCount } from '../game/types';
 
 export interface MenuScreenProps {
   bests: Bests;
@@ -25,16 +19,16 @@ export function MenuScreen({ bests, onPlay, onTutorial }: MenuScreenProps) {
         <span className="menu__coin">?</span>
       </div>
       <div className="flex w-full max-w-md flex-col items-stretch gap-4">
-        {LEVEL_LABELS.map((entry) => (
+        {PLAY_LEVELS.map((level) => (
           <button
-            key={entry.level}
+            key={level}
             className="btn btn--wide btn--amber"
             onClick={() => {
-              onPlay(entry.level);
+              onPlay(level);
               sfx("click");
             }}
           >
-            {entry.label}
+            {LEVEL_LABELS[level]}
           </button>
         ))}
         <button 
@@ -47,10 +41,10 @@ export function MenuScreen({ bests, onPlay, onTutorial }: MenuScreenProps) {
       <section className="panel w-full max-w-md">
         <h2 className="panel__title">HIGH SCORES</h2>
         <dl className="menu__scores">
-          {LEVEL_LABELS.map((entry) => (
-            <div key={entry.level}>
-              <dt>{entry.label}</dt>
-              <dd>{bests[entry.level] ?? '---'}</dd>
+          {PLAY_LEVELS.map((level) => (
+            <div key={level}>
+              <dt>{LEVEL_LABELS[level]}</dt>
+              <dd>{bests[level] ?? '---'}</dd>
             </div>
           ))}
         </dl>

@@ -3,7 +3,7 @@ import { sfx } from '../audio/synth';
 import { generateChallenge, minimalSolution } from '../game/challenge';
 import { score } from '../game/scoring';
 import { recordScore } from '../game/storage';
-import { COIN_NAMES, type QubitCount, opLabel } from '../game/types';
+import { COIN_NAMES, LEVEL_LABELS, type QubitCount, opLabel } from '../game/types';
 import type { Rng } from '../quantum/rng';
 import { coinMarginal } from '../quantum/state';
 import { ActionBar } from './components/ActionBar';
@@ -13,12 +13,6 @@ import { ShotHistogram } from './components/ShotHistogram';
 import { SuccessModal } from './components/SuccessModal';
 import { TargetPanel } from './components/TargetPanel';
 import { useCoinPlay } from './useCoinPlay';
-
-const LEVEL_TITLES: Record<QubitCount, string> = {
-  1: 'ONE COIN',
-  2: 'TWO COINS',
-  3: 'THREE COINS',
-};
 
 function timeText(ms: number): string {
   const total = Math.max(0, Math.floor(ms / 1000));
@@ -93,7 +87,7 @@ export function GameScreen({ level, onExit, onScore }: GameScreenProps) {
       <header className="hud">
         <div className="hud__stat">
           <span className="hud__label">LEVEL</span>
-          <span className="hud__value">{LEVEL_TITLES[level]}</span>
+          <span className="hud__value">{LEVEL_LABELS[level]}</span>
         </div>
         <div className="hud__stat">
           <span className="hud__label">TIME</span>

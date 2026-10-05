@@ -124,10 +124,10 @@ describe('TWIST', () => {
 });
 
 describe('invariants under random sequences', () => {
-  for (const n of [1, 2, 3]) {
+  for (const n of [1, 2, 3, 4]) {
     it(`preserves normalization and dyadic probabilities for ${n} coin(s)`, () => {
       const rng = mulberry32(1000 + n);
-      const grid = [0, 0.125, 0.25, 0.5, 1];
+      const grid = [0, 0.0625, 0.125, 0.25, 0.5, 1];
       for (let run = 0; run < 40; run++) {
         const s = randomSequence(n, 30, rng);
         expect(norm(s)).toBeCloseTo(1, 9);

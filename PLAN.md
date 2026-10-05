@@ -14,9 +14,9 @@
 
 ### Key Mathematical Consequence (drives several decisions below)
 The action set {X, H, Y, Z, CNOT} is the **Clifford gate set**. Starting from $|0\ldots0\rangle$, every reachable state is a *stabilizer state*, whose computational-basis probability distribution is **uniform over an affine subspace of $\text{GF}(2)^N$**. Therefore:
-* All reachable probabilities are exactly in $\{0, \tfrac18, \tfrac14, \tfrac12, 1\}$ — no tiny probabilities can ever occur.
-* The complete catalog of distinct targets is tiny: **L1: 3 distributions (1 non-trivial — always the 50/50), L2: 11 (7 non-trivial), L3: 51 (43 non-trivial)**.
-* Any two distinct reachable distributions differ by $\ge \tfrac18$ at some outcome — the win tolerance (§7) is provably safe.
+* All reachable probabilities are exactly in $\{0, \tfrac1{16}, \tfrac18, \tfrac14, \tfrac12, 1\}$ — no tiny probabilities can ever occur.
+* The complete catalog of distinct targets is tiny: **n=1: 3 distributions (tutorial only; 1 non-trivial — always the 50/50), n=2: 11 (7 non-trivial), n=3: 51 (43 non-trivial), n=4: 307 (291 non-trivial)**.
+* Any two distinct reachable distributions differ by $\ge \tfrac1{16}$ at some outcome — the win tolerance (§7) is provably safe.
 * **Doc fix required:** the Level 3 example in `IDEA.md` (HHH/HTT/THT/TTT at 25% each) is **unreachable** — its support $\{000,011,101,111\}$ is not an affine subspace. Replace it with a reachable example (e.g. HHH/HTT/THH/TTT = $\{000,011,100,111\}$). Never hand-author targets.
 
 ---
@@ -52,7 +52,7 @@ flowchart TD
 
     subgraph QuantumCore ["Quantum Engine (Self-Contained, zero React imports)"]
         ComplexMath["Complex Number Ops ([re,im] tuples)"]
-        StateVector["1-3 Qubit State Vector (Dimension 2, 4, 8)"]
+        StateVector["1-4 Qubit State Vector (Dimension 2, 4, 8, 16)"]
         Gates["Gates as amplitude-pair ops (X, H, Z, Y) + CNOT permutation"]
         Sampler["Inverse-CDF Shot Sampler (1000 shots, seeded RNG)"]
         Analysis["Reachability BFS oracle (minimal depth per target, dedup catalog)"]
@@ -92,7 +92,7 @@ e2e/        playwright.config.ts + specs
 ## 4. Quantum Simulation Mathematical Specification
 
 ### A. State Vector & Endianness
-For $N \in \{1, 2, 3\}$ coins, the state vector $|\psi\rangle$ is an array of $2^N$ complex numbers:
+For $N \in \{1, 2, 3, 4\}$ coins, the state vector $|\psi\rangle$ is an array of $2^N$ complex numbers:
 $$c_k = a_k + i b_k, \qquad \sum_{k=0}^{2^N-1} |c_k|^2 = 1$$
 
 **Endianness Convention (Coin to Bit Mapping): Coin A = most significant bit of the basis index, Tails = 1, Heads = 0.**
@@ -116,7 +116,7 @@ The 2-coin truncation gives `00=HH, 01=HT, 10=TH, 11=TT` as required. Histogram 
    *Applied to $|0\rangle$ (Heads) $\implies \frac{1}{\sqrt{2}}(|0\rangle + |1\rangle)$ (50% Heads, 50% Tails).*
 3. **TURN ($Z$ gate):** $\begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix}$
 4. **TWIST ($Y$ gate):** $\begin{pmatrix} 0 & -i \\ i & 0 \end{pmatrix}$ — introduces complex amplitudes; amplitudes must be stored as real+imag from day one (never real-only).
-5. **LINK ($CNOT$ gate):** control coin $c$, target coin $t$; bit $t$ flips iff bit $c$ is 1 (Tails). All 6 ordered pairs in 3-coin systems: $(A,B), (A,C), (B,A), (B,C), (C,A), (C,B)$. **Direction matters:** on state `TH`, `LINK(A,B)` → `TT` while `LINK(B,A)` leaves `TH` unchanged.
+5. **LINK ($CNOT$ gate):** control coin $c$, target coin $t$; bit $t$ flips iff bit $c$ is 1 (Tails). Ordered pairs per level: 2-coin: 2, 3-coin: 6, 4-coin: 12. **Direction matters:** on state `TH`, `LINK(A,B)` → `TT` while `LINK(B,A)` leaves `TH` unchanged.
 
 **Implementation strategy (deliberately avoids tensor-product machinery — the classic source of endianness bugs):**
 * `applyGate1(U, coin)`: apply the 2×2 matrix directly to each amplitude pair $(k,\; k \oplus 2^{\text{coinBit}})$. No `kron`, no built matrices.
@@ -160,9 +160,10 @@ flowchart TD
     DepthCheck -- Yes --> StoreTarget
 ```
 
-* **Level 1 (One Coin):** $K \in [1, 3]$ from `[FLIP, MIX]`.
 * **Level 2 (Two Coins):** $K \in [2, 5]$ from `[FLIP, MIX, TURN, TWIST, LINK]`.
 * **Level 3 (Three Coins):** $K \in [3, 7]$ from `[FLIP, MIX, TURN, TWIST, LINK]`.
+* **Level 4 (Four Coins):** $K \in [3, 8]$ from `[FLIP, MIX, TURN, TWIST, LINK]`.
+* Single-coin play lives in the tutorial only; the level-1 generator path remains covered by tests.
 * **Solvability guarantee:** the stored generating sequence replays to the target exactly; verified in tests. Requires the invariant *generator action set ⊆ player action set per level* (test-locked) — it holds today for all three levels.
 
 ### Rejection rules (fixed — the previous rules were too weak)
@@ -191,7 +192,7 @@ flowchart TD
      $$\max_i \left| P_{\text{current}}(i) - P_{\text{target}}(i) \right| < 0.005$$
    * Both vectors defensively normalized first. The sampler output must never reach this function (enforced by signature and test).
 
-**Why 0.005 is provably safe:** both vectors have entries in $\{0,\tfrac18,\tfrac14,\tfrac12,1\}$ (player states are also stabilizer states), so any two *distinct* reachable distributions differ by $\ge \tfrac18 = 0.125$ at some index. The tolerance sits 25× below the smallest real difference and far above float noise: no false positives, no false negatives.
+**Why 0.005 is provably safe:** both vectors have entries in $\{0,\tfrac1{16},\tfrac18,\tfrac14,\tfrac12,1\}$ (player states are also stabilizer states), so any two *distinct* reachable distributions differ by $\ge \tfrac1{16} = 0.0625$ at some index. The tolerance sits 12× below the smallest real difference and far above float noise: no false positives, no false negatives.
 
 ### Measurement Semantics (explicit)
 * **MEASURE does not collapse or modify the state vector** (collapsing would make distribution-matching unreachable after one press). It only samples and renders.
@@ -238,7 +239,7 @@ flowchart TD
 ### Phase 2 — Challenge Generation + Verification
 * **Files:** `src/game/{types,challenge}.ts`, `src/quantum/analysis.ts` (BFS oracle) + tests incl. `challenge.property.test.ts`.
 * **Dependencies:** Phase 1.
-* **Tests before moving on:** 500 generated challenges — replaying the stored solution reproduces the target within $10^{-9}$; support $\ge 2$; keys unique vs the history queue; generator actions ⊆ player actions; bounded-rejection fallback works. Oracle checks: catalog sizes exactly 3/11/51; minimal-depth bands respected; **the unreachable IDEA.md L3 example is asserted unreachable** (regression guard for hand-authored targets).
+* **Tests before moving on:** 500 generated challenges — replaying the stored solution reproduces the target within $10^{-9}$; support $\ge 2$; keys unique vs the history queue; generator actions ⊆ player actions; bounded-rejection fallback works. Oracle checks: catalog sizes exactly 3/11/51/307; minimal-depth bands respected; **the unreachable IDEA.md L3 example is asserted unreachable** (regression guard for hand-authored targets).
 * **Acceptance:** 500/500 solvable, non-trivial, dedup effective per level.
 
 ### Phase 3 — Game State
@@ -287,7 +288,7 @@ flowchart TD
 ## 10. Engineering Invariants (must always hold)
 
 1. $\sum|c_i|^2 = 1 \pm 10^{-9}$ after every operation.
-2. $\sum p_i = 1 \pm 10^{-9}$, all $p_i \ge 0$, and every $p_i \in \{0,\tfrac18,\tfrac14,\tfrac12,1\} \pm 10^{-9}$ (Clifford reachability).
+2. $\sum p_i = 1 \pm 10^{-9}$, all $p_i \ge 0$, and every $p_i \in \{0,\tfrac1{16},\tfrac18,\tfrac14,\tfrac12,1\} \pm 10^{-9}$ (Clifford reachability).
 3. Gates are unitary ($U^\dagger U = \mathbf{I}$); CNOT is a permutation of basis states.
 4. $X^2 = H^2 = Y^2 = Z^2 = \text{CNOT}^2 = \mathbf{I}$ (up to global phase).
 5. Bit convention locked by the 8-row table: Coin A = MSB, Tails = 1 (single `coinBit`/`label` implementation).
@@ -314,7 +315,7 @@ flowchart TD
 | **Interference / Complex Math** | Vitest unit tests | `MIX→TURN→MIX` ⇒ $P(T)=1$; `MIX→FLIP→MIX` ⇒ $P(H)=1$; Y-phase tests pass. |
 | **CNOT Direction** | Vitest unit tests | `LINK(A,B)` on `TH` → `TT`; `LINK(B,A)` on `TH` unchanged. |
 | **Solvability Guarantee** | Property suite (500 runs) | 100% of challenges replay their stored solution to the target ($10^{-9}$); trivial (support-1) targets rejected. |
-| **Target-Space Sanity** | BFS oracle tests | Catalog sizes exactly 3/11/51; unreachable examples (e.g. IDEA.md's L3 sample) rejected; depth bands respected. |
+| **Target-Space Sanity** | BFS oracle tests | Catalog sizes exactly 3/11/51/307; unreachable examples (e.g. IDEA.md's L3 sample) rejected; depth bands respected. |
 | **Win Condition Purity** | Vitest (reducer/win) + E2E | Success only on exact distribution match; repeated measurement of a wrong state never wins (noise immunity). |
 | **Shot Sampling** | Vitest with seeded RNG | $\sum$ counts $= 1000$; only supported outcomes; seeded runs byte-identical; visible variance in histogram. |
 | **State Semantics** | Vitest (reducer) | MEASURE non-mutating; snapshot-exact UNDO; RESET keeps target; histogram cleared on state change. |

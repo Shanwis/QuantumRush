@@ -51,7 +51,7 @@ test('tutorial teaches every operation and gates progress', async ({ page }) => 
   await twist.click();
   await page.getByRole('button', { name: 'MEASURE', exact: true }).click();
   await expect(page.getByText('Training complete!')).toBeVisible();
-  await expect(page.getByRole('button', { name: 'PLAY LEVEL 1' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'PLAY TWO COINS' })).toBeVisible();
 
   await page.getByRole('button', { name: 'MANUAL', exact: true }).click();
   await expect(page.getByText('THE LOOP')).toBeVisible();
@@ -59,5 +59,5 @@ test('tutorial teaches every operation and gates progress', async ({ page }) => 
   await expect(page.getByText('entanglement')).toBeVisible();
 
   await page.getByRole('button', { name: 'BACK', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'ONE COIN' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'TWO COINS' })).toBeVisible();
 });

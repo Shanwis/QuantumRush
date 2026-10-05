@@ -14,7 +14,7 @@ const ACTION_NAMES: Record<string, string> = {
   Y: 'TWIST',
 };
 
-const COINS = ['A', 'B', 'C'];
+const COINS = ['A', 'B', 'C', 'D'];
 
 export function trackErrors(page: Page): string[] {
   const errors: string[] = [];

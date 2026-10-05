@@ -4,6 +4,7 @@ export interface Bests {
   1: number | null;
   2: number | null;
   3: number | null;
+  4: number | null;
 }
 
 export interface Settings {
@@ -37,7 +38,7 @@ export function loadBests(): Bests {
     const value = best[String(level)];
     return typeof value === 'number' ? value : null;
   };
-  return { 1: pick(1), 2: pick(2), 3: pick(3) };
+  return { 1: pick(1), 2: pick(2), 3: pick(3), 4: pick(4) };
 }
 
 export function recordScore(level: QubitCount, value: number): boolean {

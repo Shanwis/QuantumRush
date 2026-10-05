@@ -13,10 +13,12 @@ describe('scoring', () => {
     expect(score(5, 20, 1)).toBe(4100);
     expect(score(5, 20, 2)).toBe(8200);
     expect(score(5, 20, 3)).toBe(16400);
+    expect(score(5, 20, 4)).toBe(32800);
   });
 
   it('floors at 100 before the multiplier', () => {
     expect(score(100, 1000, 1)).toBe(100);
     expect(score(100, 1000, 3)).toBe(400);
+    expect(score(100, 1000, 4)).toBe(800);
   });
 });

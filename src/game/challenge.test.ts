@@ -11,13 +11,14 @@ import {
 } from './challenge';
 import { type QubitCount, applyOp, opsForLevel } from './types';
 
-const LEVELS: QubitCount[] = [1, 2, 3];
+const LEVELS: QubitCount[] = [2, 3, 4];
 
 describe('target catalog', () => {
-  it('exposes exactly 3, 11 and 51 distinct distributions', () => {
+  it('exposes exactly 3, 11, 51 and 307 distinct distributions', () => {
     expect(buildCatalog(1).size).toBe(3);
     expect(buildCatalog(2).size).toBe(11);
     expect(buildCatalog(3).size).toBe(51);
+    expect(buildCatalog(4).size).toBe(307);
   });
 
   it('rejects the unreachable HHH/HTT/THT/TTT example', () => {
@@ -34,7 +35,7 @@ describe('target catalog', () => {
 describe('generateChallenge', () => {
   it('produces 500 solvable, non-trivial, banded challenges without fresh repeats', () => {
     const rng = mulberry32(20261004);
-    const histories: Record<QubitCount, string[]> = { 1: [], 2: [], 3: [] };
+    const histories: Record<QubitCount, string[]> = { 1: [], 2: [], 3: [], 4: [] };
     for (let i = 0; i < 500; i++) {
       const level = LEVELS[i % 3];
       const challenge = generateChallenge(level, rng, histories[level]);

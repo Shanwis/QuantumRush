@@ -41,7 +41,7 @@ export function useCoinPlay(
   const [linkCtl, setLinkCtl] = useState<number | null>(null);
   const [settle, setSettle] = useState<('H' | 'T')[] | null>(null);
   const [measureRun, setMeasureRun] = useState(0);
-  const [flipKeys, setFlipKeys] = useState<number[]>(() => [0, 0, 0]);
+  const [flipKeys, setFlipKeys] = useState<number[]>(() => [0, 0, 0, 0]);
   const wonRef = useRef(false);
   const onWinRef = useRef(onWin);
   onWinRef.current = onWin;
@@ -153,7 +153,7 @@ export function useCoinPlay(
     setLinkArmed(false);
     setLinkCtl(null);
     setSettle(null);
-    setFlipKeys([0, 0, 0]);
+    setFlipKeys([0, 0, 0, 0]);
     dispatch({ type: 'START', level: nextLevel, challenge, now: performance.now() });
   };
 

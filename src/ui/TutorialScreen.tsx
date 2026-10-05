@@ -239,11 +239,11 @@ export function TutorialScreen({ onBack, onPlayLevel }: TutorialScreenProps) {
                     <button
                       className="btn btn--amber"
                       onClick={() => {
-                        if (onPlayLevel) onPlayLevel(1);
+                        if (onPlayLevel) onPlayLevel(2);
                         else onBack();
                       }}
                     >
-                      PLAY LEVEL 1
+                      PLAY TWO COINS
                     </button>
                   ) : null
                 ) : (

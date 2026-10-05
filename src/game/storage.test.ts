@@ -25,9 +25,9 @@ afterEach(() => {
 describe('high score storage', () => {
   it('round-trips per-level bests', () => {
     install(new FakeStorage());
-    expect(loadBests()).toEqual({ 1: null, 2: null, 3: null });
+    expect(loadBests()).toEqual({ 1: null, 2: null, 3: null, 4: null });
     expect(recordScore(2, 2840)).toBe(true);
-    expect(loadBests()).toEqual({ 1: null, 2: 2840, 3: null });
+    expect(loadBests()).toEqual({ 1: null, 2: 2840, 3: null, 4: null });
   });
 
   it('records only strictly greater scores', () => {
@@ -43,7 +43,7 @@ describe('high score storage', () => {
     const fake = new FakeStorage();
     fake.setItem('qubit_rush_highscores', '{not json');
     install(fake);
-    expect(loadBests()).toEqual({ 1: null, 2: null, 3: null });
+    expect(loadBests()).toEqual({ 1: null, 2: null, 3: null, 4: null });
     expect(recordScore(3, 500)).toBe(true);
   });
 
@@ -56,7 +56,7 @@ describe('high score storage', () => {
         throw new Error('denied');
       },
     });
-    expect(loadBests()).toEqual({ 1: null, 2: null, 3: null });
+    expect(loadBests()).toEqual({ 1: null, 2: null, 3: null, 4: null });
     expect(recordScore(1, 500)).toBe(true);
     expect(loadSettings()).toEqual({ themeOn: true });
     expect(() => saveSettings({ themeOn: false })).not.toThrow();
