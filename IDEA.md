@@ -843,6 +843,8 @@ The game is intentionally hiding the complexity.
 
 The educational explanation happens outside the game.
 
+The HOW TO PLAY tutorial (PRACTICE + MANUAL tabs) is the game's sanctioned explanation layer. It may name quantum operations (X/H/Z/Y/CNOT) and use minimal notation (|0⟩, |1⟩). Gameplay screens stay notation-free.
+
 ---
 
 # 25. No Leaderboard
@@ -921,6 +923,8 @@ Player thinks:
 That moment of curiosity is intentional.
 
 The game is designed to create the question that the following quantum theory session answers.
+
+The HOW TO PLAY tutorial answers those questions on demand — PRACTICE first, names afterward.
 
 ---
 

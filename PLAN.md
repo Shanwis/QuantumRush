@@ -10,6 +10,7 @@
 * **Operations:** Everyday tactile actions (**FLIP**, **MIX**, **TURN**, **TWIST**, **LINK**), hiding technical Dirac notation and gate names.
 * **Goal:** Manipulate the coin states until measuring them matches a target probability distribution.
 * **Platform:** 100% browser-based (client-only, no server/database, zero installation, instant load under 30 seconds).
+* **Tutorial:** the menu HOW TO PLAY screen (PRACTICE + MANUAL) is the sanctioned explanation layer; quantum names and minimal notation (|0⟩, |1⟩) appear there only, never in gameplay screens.
 
 ### Key Mathematical Consequence (drives several decisions below)
 The action set {X, H, Y, Z, CNOT} is the **Clifford gate set**. Starting from $|0\ldots0\rangle$, every reachable state is a *stabilizer state*, whose computational-basis probability distribution is **uniform over an affine subspace of $\text{GF}(2)^N$**. Therefore:
@@ -80,9 +81,9 @@ flowchart TD
 ```
 src/
   quantum/  complex.ts gates.ts state.ts sampler.ts rng.ts analysis.ts
-  game/     types.ts challenge.ts scoring.ts reducer.ts storage.ts win.ts
+  game/     types.ts challenge.ts scoring.ts reducer.ts storage.ts win.ts tutorialSteps.ts
   audio/    synth.ts
-  ui/       App.tsx MenuScreen.tsx GameScreen.tsx components/ styles/
+  ui/       App.tsx MenuScreen.tsx GameScreen.tsx TutorialScreen.tsx useCoinPlay.ts components/ styles/
 e2e/        playwright.config.ts + specs
 ```
 
