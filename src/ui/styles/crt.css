@@ -827,7 +827,8 @@ body {
   .coin--flicker .coin__face--t,
   .menu__coin,
   .modal__best,
-  .btn--measure {
+  .btn--measure,
+  .btn--pulse {
     animation: none !important;
   }
 
