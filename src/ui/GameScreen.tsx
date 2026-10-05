@@ -140,11 +140,6 @@ export function GameScreen({ level, onExit, onScore }: GameScreenProps) {
         </section>
       </div>
 
-      <section className="panel">
-        <h2 className="panel__title">SHOTS</h2>
-        <ShotHistogram shots={session.shots} n={level} run={play.measureRun} />
-      </section>
-
       <ActionBar
         level={level}
         linkArmed={play.linkArmed}
@@ -159,6 +154,11 @@ export function GameScreen({ level, onExit, onScore }: GameScreenProps) {
         onMeasure={play.onMeasure}
         onHint={onHint}
       />
+
+      <section className="panel">
+        <h2 className="panel__title">SHOTS</h2>
+        <ShotHistogram shots={session.shots} n={level} run={play.measureRun} />
+      </section>
 
       <HistoryList ops={session.history.map((entry) => entry.op)} />
 

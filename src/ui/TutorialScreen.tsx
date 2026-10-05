@@ -294,11 +294,6 @@ export function TutorialScreen({ onBack, onPlayLevel }: TutorialScreenProps) {
           </div>
 
           <section className="panel">
-            <h2 className="panel__title">SHOTS</h2>
-            <ShotHistogram shots={session.shots} n={currentStep.level} run={play.measureRun} />
-          </section>
-
-          <section className="panel">
             <h2 className="panel__title">ACTIONS</h2>
             <div className="toolbar">
               {defs.map((d) => (
@@ -351,6 +346,11 @@ export function TutorialScreen({ onBack, onPlayLevel }: TutorialScreenProps) {
                 MEASURE
               </button>
             </div>
+          </section>
+
+          <section className="panel">
+            <h2 className="panel__title">SHOTS</h2>
+            <ShotHistogram shots={session.shots} n={currentStep.level} run={play.measureRun} />
           </section>
 
           <HistoryList ops={session.history.map((entry) => entry.op)} />
