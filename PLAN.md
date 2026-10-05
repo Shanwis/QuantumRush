@@ -206,6 +206,7 @@ flowchart TD
 
 * **UNDO** — exact snapshot revert (a copy of the ≤8-amplitude vector is stored per action; no inverse-gate reapplication). Pops the action, decrements the run move counter, clears the histogram. The timer keeps running — and the score is never refunded: every gate pressed stays paid, even after UNDO.
 * **RESET** — keeps the current target, the running timer, and the spent-gate tally; restores $|0\ldots0\rangle$; clears history, histogram, run moves. Score never goes back up.
+* **RELOAD** (top bar) — new target probability and a full reset (coins, history, moves, shots, score, timer). Fresh attempt, high-score eligible.
 * **PLAY AGAIN** (success modal) = fresh attempt on the same target (new timer). **NEXT CHALLENGE** = new target via the generator.
 * Success locks the board (no undo after winning); success is detected only at MEASURE.
 * **Timer** accumulates via `performance.now()` deltas (throttle-safe in background tabs) and renders `mm:ss`; seconds are floored for scoring.
@@ -216,9 +217,10 @@ flowchart TD
 
 * **Score Formula:**
   $$\text{Score} = \max\left(100, \left(5000 - (\text{Moves} \times 120) - (\lfloor\text{Seconds}\rfloor \times 15)\right)\right) \times \text{LevelMultiplier}$$
-  * Multipliers: 1 Coin = $\times 1$, 2 Coins = $\times 2$, 3 Coins = $\times 4$.
+  * Multipliers: 2 Coins = $\times 2$, 3 Coins = $\times 4$, 4 Coins = $\times 8$.
   * Deterministic pure function of (moves, elapsed, level) — displayed live during play.
   * Moves counted here = gates pressed during the whole attempt. Score is strictly non-increasing within an attempt: UNDO and RESET never refund it.
+  * Replaying the same target (PLAY AGAIN) is a practice run: its score is never saved to high scores, and the success modal notes `(not considered for high score)`.
   * Accuracy is not a scoring factor (winning requires exact distribution match; nothing finer is scoreable).
 * **Local High Scores:**
   * Versioned JSON in `localStorage` (`qubit_rush_highscores` → `{v:1, best:{"1":n|null,"2":...,"3":...}}`), all access in `try/catch`, in-memory fallback.

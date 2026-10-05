@@ -36,10 +36,12 @@ export function GameScreen({ level, onExit, onScore }: GameScreenProps) {
   };
 
   const [newBest, setNewBest] = useState(false);
+  const [practice, setPractice] = useState(false);
   const [now, setNow] = useState(() => performance.now());
   const [hintStep, setHintStep] = useState(0);
 
   const play = useCoinPlay(level, makeChallenge, (value) => {
+    if (practice) return;
     setNewBest(recordScore(level, value));
     onScore(level, value);
   });
@@ -64,6 +66,7 @@ export function GameScreen({ level, onExit, onScore }: GameScreenProps) {
 
   const startNext = (fresh: boolean) => {
     setNewBest(false);
+    setPractice(!fresh);
     setHintStep(0);
     sfx('click');
     const challenge = fresh ? makeChallenge(play.rng) : session.challenge;
@@ -101,9 +104,14 @@ export function GameScreen({ level, onExit, onScore }: GameScreenProps) {
           <span className="hud__label">SCORE</span>
           <span className="hud__value">{liveScore}</span>
         </div>
-        <button className="btn btn--ghost" onClick={onExit}>
-          MENU
-        </button>
+        <div className="flex gap-2">
+          <button className="btn btn--ghost" onClick={() => startNext(true)}>
+            RELOAD
+          </button>
+          <button className="btn btn--ghost" onClick={onExit}>
+            MENU
+          </button>
+        </div>
       </header>
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -160,6 +168,7 @@ export function GameScreen({ level, onExit, onScore }: GameScreenProps) {
           moves={session.totalMoves}
           score={session.score}
           newBest={newBest}
+          practice={practice}
           onNext={() => startNext(true)}
           onReplay={() => startNext(false)}
           onMenu={onExit}

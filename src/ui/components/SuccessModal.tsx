@@ -3,6 +3,7 @@ export interface SuccessModalProps {
   moves: number;
   score: number;
   newBest: boolean;
+  practice: boolean;
   onNext: () => void;
   onReplay: () => void;
   onMenu: () => void;
@@ -13,6 +14,7 @@ export function SuccessModal({
   moves,
   score,
   newBest,
+  practice,
   onNext,
   onReplay,
   onMenu,
@@ -35,7 +37,11 @@ export function SuccessModal({
             <dd>{score}</dd>
           </div>
         </dl>
-        {newBest ? <p className="modal__best">NEW HIGH SCORE!</p> : null}
+        {practice ? (
+          <p className="modal__practice">(not considered for high score)</p>
+        ) : newBest ? (
+          <p className="modal__best">NEW HIGH SCORE!</p>
+        ) : null}
         <div className="modal__actions">
           <button className="btn btn--amber" onClick={onNext}>
             NEXT CHALLENGE

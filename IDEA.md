@@ -590,6 +590,8 @@ RESET returns all coins to their initial state and clears the action history.
 
 The move counter keeps counting the whole attempt — RESET clears the coins and the history, not your spent moves or the running clock.
 
+A RELOAD button in the top bar gives a different target probability and resets everything — coins, history, moves, score, and timer. It starts a fresh attempt that counts for high scores.
+
 ---
 
 # 17. Timer
@@ -624,6 +626,8 @@ More coins = higher score multiplier.
 3 coins → ×4
 4 coins → ×8
 ```
+
+Replays of the same target (PLAY AGAIN) are practice runs — their scores are never saved as high scores, and the result shows "(not considered for high score)".
 
 ### Number of operations
 

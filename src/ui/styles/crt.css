@@ -557,6 +557,12 @@ body {
   animation: bestBlink 0.8s steps(1, end) infinite;
 }
 
+.modal__practice {
+  margin: 0 0 16px;
+  font-size: 20px;
+  color: var(--phosphor-dim);
+}
+
 @keyframes bestBlink {
   0%,
   49% {
