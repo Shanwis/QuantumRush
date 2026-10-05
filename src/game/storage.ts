@@ -52,7 +52,7 @@ export function recordScore(level: QubitCount, value: number): boolean {
 
 export function loadSettings(): Settings {
   const data = readJson(SETTINGS_KEY) as { v?: number; themeOn?: boolean } | null;
-  return { themeOn: data !== null && data.v === 2 ? data.themeOn !== false : true };
+  return { themeOn: data !== null && data.v === 2 ? data.themeOn === true : false };
 }
 
 export function saveSettings(settings: Settings): void {

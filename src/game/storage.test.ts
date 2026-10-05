@@ -58,14 +58,16 @@ describe('high score storage', () => {
     });
     expect(loadBests()).toEqual({ 1: null, 2: null, 3: null, 4: null });
     expect(recordScore(1, 500)).toBe(true);
-    expect(loadSettings()).toEqual({ themeOn: true });
-    expect(() => saveSettings({ themeOn: false })).not.toThrow();
+    expect(loadSettings()).toEqual({ themeOn: false });
+    expect(() => saveSettings({ themeOn: true })).not.toThrow();
   });
 });
 
 describe('settings storage', () => {
-  it('round-trips the theme flag', () => {
+  it('defaults the theme to off and round-trips the flag', () => {
     install(new FakeStorage());
+    expect(loadSettings()).toEqual({ themeOn: false });
+    saveSettings({ themeOn: true });
     expect(loadSettings()).toEqual({ themeOn: true });
     saveSettings({ themeOn: false });
     expect(loadSettings()).toEqual({ themeOn: false });

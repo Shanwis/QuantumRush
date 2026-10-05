@@ -18,7 +18,7 @@ npm run test:e2e  # browser suite (Playwright, starts its own dev server)
 
 E2E runs are deterministic via the `?seed=<number>` URL parameter (seeds challenge generation and shot sampling).
 
-Sound: the speaker toggle controls the theme song only. Action sounds (coin presses, MEASURE, win) always play.
+Sound: the speaker toggle controls the theme song only (off by default). Action sounds (coin presses, MEASURE, win) always play.
 
 ## Build and deploy
 
