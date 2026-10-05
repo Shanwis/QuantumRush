@@ -1,3 +1,4 @@
+import { sfx } from '../audio/synth';
 import type { Bests } from '../game/storage';
 import type { QubitCount } from '../game/types';
 
@@ -28,12 +29,18 @@ export function MenuScreen({ bests, onPlay, onTutorial }: MenuScreenProps) {
           <button
             key={entry.level}
             className="btn btn--wide btn--amber"
-            onClick={() => onPlay(entry.level)}
+            onClick={() => {
+              onPlay(entry.level);
+              sfx("click");
+            }}
           >
             {entry.label}
           </button>
         ))}
-        <button className="btn btn--wide btn--ghost" onClick={onTutorial}>
+        <button 
+          className="btn btn--wide btn--ghost" 
+          onClick={onTutorial}
+        >
           HOW TO PLAY
         </button>
       </div>

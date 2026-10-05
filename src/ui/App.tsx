@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { setThemeEnabled, unlockAudio } from '../audio/synth';
+import { sfx, setThemeEnabled, unlockAudio } from '../audio/synth';
 import { loadBests, loadSettings, type Bests } from '../game/storage';
 import type { QubitCount } from '../game/types';
 import { CrtFrame } from './components/CrtFrame';
@@ -22,6 +22,7 @@ export function App() {
 
   const toggleTheme = useCallback(() => {
     setThemeOn((prev) => {
+      sfx("click");
       const next = !prev;
       setThemeEnabled(next);
       return next;
@@ -38,12 +39,18 @@ export function App() {
         <GameScreen
           key={level}
           level={level}
-          onExit={() => setLevel(null)}
+          onExit={() => {
+            setLevel(null); 
+            sfx("click");
+          }}
           onScore={onScore}
         />
       ) : tutorial ? (
         <TutorialScreen
-          onBack={() => setTutorial(false)}
+          onBack={() => {
+            setTutorial(false); 
+            sfx("click");
+          }}
           onPlayLevel={(lv) => {
             setTutorial(false);
             setLevel(lv);
@@ -53,7 +60,10 @@ export function App() {
         <MenuScreen
           bests={bests}
           onPlay={setLevel}
-          onTutorial={() => setTutorial(true)}
+          onTutorial={() => {
+            setTutorial(true); 
+            sfx("click");
+          }}
         />
       )}
     </CrtFrame>
