@@ -1,19 +1,18 @@
-import { useEffect, useMemo, useReducer, useRef, useState, type MouseEvent } from 'react';
-import { sfx, unlockAudio } from '../audio/synth';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { sfx } from '../audio/synth';
 import { generateChallenge, minimalSolution } from '../game/challenge';
-import { reduce, startSession, type GameSession } from '../game/reducer';
 import { score } from '../game/scoring';
 import { recordScore } from '../game/storage';
-import { COIN_NAMES, type Op, type QubitCount, opLabel } from '../game/types';
-import { sampleOutcome } from '../quantum/sampler';
-import { createRng, seedFromUrl, type Rng } from '../quantum/rng';
-import { coinBit, coinMarginal, probabilities } from '../quantum/state';
+import { COIN_NAMES, type QubitCount, opLabel } from '../game/types';
+import type { Rng } from '../quantum/rng';
+import { coinMarginal } from '../quantum/state';
 import { ActionBar } from './components/ActionBar';
 import { Coin } from './components/Coin';
 import { HistoryList } from './components/HistoryList';
 import { ShotHistogram } from './components/ShotHistogram';
 import { SuccessModal } from './components/SuccessModal';
 import { TargetPanel } from './components/TargetPanel';
+import { useCoinPlay } from './useCoinPlay';
 
 const LEVEL_TITLES: Record<QubitCount, string> = {
   1: 'ONE COIN',
@@ -36,39 +35,21 @@ export interface GameScreenProps {
 
 export function GameScreen({ level, onExit, onScore }: GameScreenProps) {
   const servedRef = useRef<string[]>([]);
-  const rngRef = useRef<Rng | null>(null);
-  const [session, dispatch] = useReducer(reduce, level, (lv) => {
-    const rng = createRng(seedFromUrl() ?? Date.now());
-    rngRef.current = rng;
-    const challenge = generateChallenge(lv, rng, servedRef.current);
+  const makeChallenge = (rng: Rng) => {
+    const challenge = generateChallenge(level, rng, servedRef.current);
     servedRef.current = [...servedRef.current, challenge.key];
-    return startSession(lv, challenge, performance.now());
-  });
-  const rng = rngRef.current!;
+    return challenge;
+  };
 
-  const [sel, setSel] = useState(0);
-  const [linkArmed, setLinkArmed] = useState(false);
-  const [linkCtl, setLinkCtl] = useState<number | null>(null);
-  const [now, setNow] = useState(() => performance.now());
-  const [settle, setSettle] = useState<('H' | 'T')[] | null>(null);
-  const [measureRun, setMeasureRun] = useState(0);
-  const [flipKeys, setFlipKeys] = useState<number[]>(() => {
-    const keys: number[] = [];
-    for (let i = 0; i < level; i++) keys.push(0);
-    return keys;
-  });
   const [newBest, setNewBest] = useState(false);
+  const [now, setNow] = useState(() => performance.now());
   const [hintStep, setHintStep] = useState(0);
-  const recordedRef = useRef(false);
 
-  useEffect(() => {
-    if (import.meta.env.MODE !== 'production') {
-      (window as { __QR_TEST__?: unknown }).__QR_TEST__ = {
-        challenge: session.challenge,
-        status: session.status,
-      };
-    }
-  }, [session]);
+  const play = useCoinPlay(level, makeChallenge, (value) => {
+    setNewBest(recordScore(level, value));
+    onScore(level, value);
+  });
+  const { session } = play;
 
   useEffect(() => {
     if (session.status !== 'playing') return;
@@ -76,122 +57,6 @@ export function GameScreen({ level, onExit, onScore }: GameScreenProps) {
     return () => window.clearInterval(id);
   }, [session.status]);
 
-  useEffect(() => {
-    if (session.shots === null) {
-      setSettle(null);
-      return;
-    }
-    const probs = probabilities(session.state);
-    const outcome = sampleOutcome(probs, rng);
-    const faces: ('H' | 'T')[] = [];
-    for (let coin = 0; coin < level; coin++) {
-      faces.push((outcome >> coinBit(level, coin)) & 1 ? 'T' : 'H');
-    }
-    setSettle(faces);
-    const id = window.setTimeout(() => setSettle(null), 900);
-    return () => window.clearTimeout(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session.shots]);
-
-  useEffect(() => {
-    if (session.status !== 'won') return;
-    sfx('win');
-    if (!recordedRef.current && session.score !== null) {
-      recordedRef.current = true;
-      const best = recordScore(session.level, session.score);
-      setNewBest(best);
-      onScore(session.level, session.score);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session.status]);
-
-  const apply = (op: Op) => {
-    unlockAudio();
-    if (op.kind === 'CNOT') sfx('link');
-    else if (op.kind === 'H') sfx('mix');
-    else if (op.kind === 'X') sfx('flip');
-    else if (op.kind === 'Z') sfx('turn');
-    else sfx('twist');
-    dispatch({ type: 'APPLY', op });
-    setFlipKeys((keys) => {
-      const next = [...keys];
-      if (op.kind === 'CNOT') {
-        next[op.control] += 1;
-        next[op.target] += 1;
-      } else {
-        next[op.coin] += 1;
-      }
-      return next;
-    });
-  };
-
-  const onCoinClick = (i: number) => {
-    unlockAudio();
-    if (linkCtl !== null) {
-      if (i === linkCtl) return;
-      apply({ kind: 'CNOT', control: linkCtl, target: i });
-      setLinkCtl(null);
-      setLinkArmed(false);
-      return;
-    }
-    sfx('click');
-    setSel(i);
-    if (linkArmed) setLinkCtl(i);
-  };
-
-  const onScreenPress = (event: MouseEvent<HTMLDivElement>) => {
-    if (linkCtl === null) return;
-    const target = event.target as HTMLElement;
-    if (target.closest('.coin')) return;
-    setLinkCtl(null);
-    sfx('click');
-  };
-
-  const onAction = (kind: 'X' | 'H' | 'Z' | 'Y') => apply({ kind, coin: sel });
-
-  const onLinkToggle = () => {
-    sfx('click');
-    setLinkArmed((armed) => !armed);
-    setLinkCtl(null);
-  };
-
-  const onUndo = () => {
-    sfx('click');
-    dispatch({ type: 'UNDO' });
-  };
-
-  const onReset = () => {
-    sfx('click');
-    dispatch({ type: 'RESET', now: performance.now() });
-  };
-
-  const onMeasure = () => {
-    unlockAudio();
-    sfx('measure');
-    setMeasureRun((run) => run + 1);
-    dispatch({ type: 'MEASURE', now: performance.now(), rng });
-  };
-
-  const startNext = (fresh: boolean) => {
-    recordedRef.current = false;
-    setNewBest(false);
-    setSettle(null);
-    setLinkArmed(false);
-    setLinkCtl(null);
-    setSel(0);
-    setHintStep(0);
-    const challenge = fresh
-      ? generateChallenge(level, rng, servedRef.current)
-      : session.challenge;
-    if (fresh) servedRef.current = [...servedRef.current, challenge.key];
-    sfx('click');
-    dispatch({ type: 'START', level, challenge, now: performance.now() });
-    setNow(performance.now());
-  };
-
-  const elapsed = (session.endedAt ?? now) - session.startedAt;
-  const liveScore =
-    session.score ?? score(session.moves, Math.floor(elapsed / 1000), level);
   const hintOps = useMemo(
     () => minimalSolution(level, session.challenge.key),
     [level, session.challenge.key],
@@ -202,8 +67,21 @@ export function GameScreen({ level, onExit, onScore }: GameScreenProps) {
     sfx('click');
     setHintStep((step) => Math.min(step + 1, hintOps.length));
   };
-  const hint = linkArmed
-    ? linkCtl === null
+
+  const startNext = (fresh: boolean) => {
+    setNewBest(false);
+    setHintStep(0);
+    sfx('click');
+    const challenge = fresh ? makeChallenge(play.rng) : session.challenge;
+    play.start(level, challenge);
+    setNow(performance.now());
+  };
+
+  const elapsed = (session.endedAt ?? now) - session.startedAt;
+  const liveScore =
+    session.score ?? score(session.moves, Math.floor(elapsed / 1000), level);
+  const hint = play.linkArmed
+    ? play.linkCtl === null
       ? 'PICK CONTROL COIN'
       : 'PICK TARGET COIN'
     : level === 1
@@ -211,7 +89,7 @@ export function GameScreen({ level, onExit, onScore }: GameScreenProps) {
       : 'CLICK A COIN TO SELECT IT';
 
   return (
-    <div className="flex flex-col gap-4" onClick={onScreenPress}>
+    <div className="flex flex-col gap-4" onClick={play.onScreenPress}>
       <header className="hud">
         <div className="hud__stat">
           <span className="hud__label">LEVEL</span>
@@ -247,12 +125,12 @@ export function GameScreen({ level, onExit, onScore }: GameScreenProps) {
                 key={name}
                 index={i}
                 marginal={coinMarginal(session.state, i)}
-                settleFace={settle ? settle[i] : null}
-                selected={sel === i && !linkArmed}
-                linkRole={linkCtl === i ? 'control' : null}
-                pickTarget={linkArmed && linkCtl !== null && linkCtl !== i}
-                flipKey={flipKeys[i]}
-                onClick={() => onCoinClick(i)}
+                settleFace={play.settle ? play.settle[i] : null}
+                selected={play.sel === i && !play.linkArmed}
+                linkRole={play.linkCtl === i ? 'control' : null}
+                pickTarget={play.linkArmed && play.linkCtl !== null && play.linkCtl !== i}
+                flipKey={play.flipKeys[i]}
+                onClick={() => play.onCoinClick(i)}
               />
             ))}
           </div>
@@ -262,25 +140,25 @@ export function GameScreen({ level, onExit, onScore }: GameScreenProps) {
 
       <section className="panel">
         <h2 className="panel__title">SHOTS</h2>
-        <ShotHistogram shots={session.shots} n={level} run={measureRun} />
+        <ShotHistogram shots={session.shots} n={level} run={play.measureRun} />
       </section>
 
       <ActionBar
         level={level}
-        linkArmed={linkArmed}
+        linkArmed={play.linkArmed}
         canUndo={session.history.length > 0}
         canHint={hintStep < hintOps.length}
         disabled={session.status !== 'playing'}
         hintText={hintText}
-        onAction={onAction}
-        onLinkToggle={onLinkToggle}
-        onUndo={onUndo}
-        onReset={onReset}
-        onMeasure={onMeasure}
+        onAction={play.onAction}
+        onLinkToggle={play.onLinkToggle}
+        onUndo={play.onUndo}
+        onReset={play.onReset}
+        onMeasure={play.onMeasure}
         onHint={onHint}
       />
 
-      <HistoryList ops={session.history.map((entry: { op: Op }) => entry.op)} />
+      <HistoryList ops={session.history.map((entry) => entry.op)} />
 
       {session.status === 'won' && session.score !== null ? (
         <SuccessModal
@@ -296,5 +174,3 @@ export function GameScreen({ level, onExit, onScore }: GameScreenProps) {
     </div>
   );
 }
-
-export type { GameSession };

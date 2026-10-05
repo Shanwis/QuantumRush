@@ -1,12 +1,9 @@
-import { ACTION_DEFS, LEVEL_ACTIONS, type QubitCount } from '../../game/types';
-
-const DESCRIPTIONS: Record<string, string> = {
-  FLIP: 'Flip the coin.',
-  MIX: 'Mix the coin between its two sides.',
-  TURN: "Turn the coin's quantum state.",
-  TWIST: "Twist the coin's quantum state.",
-  LINK: 'Let one coin control another.',
-};
+import {
+  ACTION_DEFS,
+  ACTION_DESCRIPTIONS,
+  LEVEL_ACTIONS,
+  type QubitCount,
+} from '../../game/types';
 
 export interface ActionBarProps {
   level: QubitCount;
@@ -62,7 +59,7 @@ export function ActionBar({
                 {d.name}
               </button>
             )}
-            <span className="tool__desc">{DESCRIPTIONS[d.name]}</span>
+            <span className="tool__desc">{ACTION_DESCRIPTIONS[d.name]}</span>
           </span>
         ))}
         <span className="toolbar__spacer" />

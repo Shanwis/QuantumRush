@@ -36,10 +36,6 @@ export function unlockAudio(): void {
   if (themeOn) startTheme();
 }
 
-export function isThemeEnabled(): boolean {
-  return themeOn;
-}
-
 export function setThemeEnabled(next: boolean): void {
   themeOn = next;
   saveSettings({ themeOn: next });

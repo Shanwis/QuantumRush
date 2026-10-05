@@ -39,6 +39,16 @@ export const ACTION_DEFS = [
   { name: 'LINK', kind: 'CNOT' },
 ] as const;
 
+export type ActionName = (typeof ACTION_DEFS)[number]['name'];
+
+export const ACTION_DESCRIPTIONS: Record<ActionName, string> = {
+  FLIP: 'Flip the coin.',
+  MIX: 'Mix the coin between its two sides.',
+  TURN: "Turn the coin's quantum state.",
+  TWIST: "Twist the coin's quantum state.",
+  LINK: 'Let one coin control another.',
+};
+
 export const LEVEL_ACTIONS: Record<QubitCount, readonly string[]> = {
   1: ['FLIP', 'MIX'],
   2: ['FLIP', 'MIX', 'TURN', 'TWIST', 'LINK'],
