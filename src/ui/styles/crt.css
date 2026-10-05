@@ -378,7 +378,7 @@ body {
 .toolbar {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
 }
 
@@ -391,6 +391,7 @@ body {
 
 .tool__desc {
   max-width: 150px;
+  min-height: 2.3em;
   font-size: 16px;
   line-height: 1.15;
   text-align: center;
