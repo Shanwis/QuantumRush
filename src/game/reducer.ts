@@ -17,7 +17,7 @@ export interface GameSession {
   challenge: Challenge;
   state: QState;
   history: HistoryEntry[];
-  moves: number;
+  totalMoves: number;
   startedAt: number;
   endedAt: number | null;
   shots: number[] | null;
@@ -29,7 +29,7 @@ export type GameEvent =
   | { type: 'START'; level: QubitCount; challenge: Challenge; now: number }
   | { type: 'APPLY'; op: Op }
   | { type: 'UNDO' }
-  | { type: 'RESET'; now: number }
+  | { type: 'RESET' }
   | { type: 'MEASURE'; now: number; rng: Rng };
 
 export function startSession(
@@ -42,7 +42,7 @@ export function startSession(
     challenge,
     state: createZeroState(level),
     history: [],
-    moves: 0,
+    totalMoves: 0,
     startedAt: now,
     endedAt: null,
     shots: null,
@@ -62,7 +62,7 @@ export function reduce(session: GameSession, event: GameEvent): GameSession {
         ...session,
         state,
         history: [...session.history, { op: event.op, state: session.state }],
-        moves: session.moves + 1,
+        totalMoves: session.totalMoves + 1,
         shots: null,
       };
     }
@@ -73,12 +73,14 @@ export function reduce(session: GameSession, event: GameEvent): GameSession {
         ...session,
         state: prev.state,
         history: session.history.slice(0, -1),
-        moves: session.moves - 1,
         shots: null,
       };
     }
     case 'RESET':
-      return startSession(session.level, session.challenge, event.now);
+      return {
+        ...startSession(session.level, session.challenge, session.startedAt),
+        totalMoves: session.totalMoves,
+      };
     case 'MEASURE': {
       if (session.status !== 'playing') return session;
       const probs = probabilities(session.state);
@@ -91,7 +93,7 @@ export function reduce(session: GameSession, event: GameEvent): GameSession {
         shots,
         status: 'won',
         endedAt: event.now,
-        score: score(session.moves, seconds, session.level),
+        score: score(session.totalMoves, seconds, session.level),
       };
     }
   }

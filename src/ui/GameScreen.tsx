@@ -79,7 +79,7 @@ export function GameScreen({ level, onExit, onScore }: GameScreenProps) {
 
   const elapsed = (session.endedAt ?? now) - session.startedAt;
   const liveScore =
-    session.score ?? score(session.moves, Math.floor(elapsed / 1000), level);
+    session.score ?? score(session.totalMoves, Math.floor(elapsed / 1000), level);
   const hint = play.linkArmed
     ? play.linkCtl === null
       ? 'PICK CONTROL COIN'
@@ -101,7 +101,7 @@ export function GameScreen({ level, onExit, onScore }: GameScreenProps) {
         </div>
         <div className="hud__stat">
           <span className="hud__label">MOVES</span>
-          <span className="hud__value">{session.moves}</span>
+          <span className="hud__value">{session.totalMoves}</span>
         </div>
         <div className="hud__stat">
           <span className="hud__label">SCORE</span>
@@ -163,7 +163,7 @@ export function GameScreen({ level, onExit, onScore }: GameScreenProps) {
       {session.status === 'won' && session.score !== null ? (
         <SuccessModal
           timeText={timeText(elapsed)}
-          moves={session.moves}
+          moves={session.totalMoves}
           score={session.score}
           newBest={newBest}
           onNext={() => startNext(true)}

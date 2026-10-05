@@ -17,25 +17,25 @@ function oneCoinChallenge() {
 }
 
 describe('reducer', () => {
-  it('starts a session at zero moves in playing state', () => {
+  it('starts a session with no moves and zero spent gates', () => {
     const session = startSession(1, oneCoinChallenge(), 1000);
     expect(session.status).toBe('playing');
-    expect(session.moves).toBe(0);
+    expect(session.totalMoves).toBe(0);
     expect(session.shots).toBeNull();
     expect(session.history).toEqual([]);
   });
 
-  it('counts moves and reverts exactly on undo', () => {
+  it('pops history on undo but never refunds spent gates', () => {
     const challenge = oneCoinChallenge();
     let session = startSession(1, challenge, 1000);
     const before = session.state;
     session = reduce(session, { type: 'APPLY', op: { kind: 'H', coin: 0 } });
-    expect(session.moves).toBe(1);
+    expect(session.history.length).toBe(1);
     expect(session.shots).toBeNull();
     session = reduce(session, { type: 'UNDO' });
-    expect(session.moves).toBe(0);
+    expect(session.history.length).toBe(0);
+    expect(session.totalMoves).toBe(1);
     expect(session.state).toBe(before);
-    expect(session.history).toEqual([]);
   });
 
   it('clears stale shots whenever the state changes', () => {
@@ -46,15 +46,37 @@ describe('reducer', () => {
     expect(session.shots).toBeNull();
   });
 
-  it('keeps the challenge across reset', () => {
+  it('clears operations on reset but keeps the timer and spent-gate tally', () => {
     const challenge = oneCoinChallenge();
     let session = startSession(1, challenge, 1000);
     session = reduce(session, { type: 'APPLY', op: { kind: 'H', coin: 0 } });
-    session = reduce(session, { type: 'RESET', now: 5000 });
+    session = reduce(session, { type: 'RESET' });
     expect(session.challenge.key).toBe(challenge.key);
-    expect(session.moves).toBe(0);
-    expect(session.startedAt).toBe(5000);
+    expect(session.totalMoves).toBe(1);
+    expect(session.startedAt).toBe(1000);
     expect(session.history).toEqual([]);
+  });
+
+  it('never refunds score across undo and reset', () => {
+    const challenge = oneCoinChallenge();
+    let session = startSession(1, challenge, 1000);
+    let prev = score(session.totalMoves, 0, 1);
+    const step = (event: GameEvent) => {
+      session = reduce(session, event);
+      const derived = score(session.totalMoves, 0, 1);
+      expect(derived).toBeLessThanOrEqual(prev);
+      prev = derived;
+    };
+    step({ type: 'APPLY', op: { kind: 'X', coin: 0 } });
+    step({ type: 'APPLY', op: { kind: 'X', coin: 0 } });
+    step({ type: 'APPLY', op: { kind: 'X', coin: 0 } });
+    step({ type: 'UNDO' });
+    step({ type: 'RESET' });
+    expect(session.totalMoves).toBe(3);
+    step({ type: 'APPLY', op: { kind: 'H', coin: 0 } });
+    step({ type: 'MEASURE', now: 6000, rng: mulberry32(11) });
+    expect(session.status).toBe('won');
+    expect(session.score).toBe(score(4, 5, 1));
   });
 
   it('samples 1000 shots without mutating the state', () => {

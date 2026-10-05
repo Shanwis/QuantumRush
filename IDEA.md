@@ -586,7 +586,7 @@ UNDO removes the most recent action.
 
 RESET returns all coins to their initial state and clears the action history.
 
-The timer and operation count should also reset when the player chooses to restart the challenge.
+The move counter keeps counting the whole attempt — RESET clears the coins and the history, not your spent moves or the running clock.
 
 ---
 
@@ -625,7 +625,7 @@ More coins = higher score multiplier.
 
 ### Number of operations
 
-Fewer operations = higher score.
+Fewer operations = higher score. Every operation pressed counts — even ones later undone or reset. The score never goes back up within a challenge.
 
 ### Time
 

@@ -129,7 +129,7 @@ export function useCoinPlay(
     setSel(0);
     setLinkArmed(false);
     setLinkCtl(null);
-    dispatch({ type: 'RESET', now: performance.now() });
+    dispatch({ type: 'RESET' });
   };
 
   const onMeasure = () => {
