@@ -1,4 +1,9 @@
-import { fetchTopScores, isSupabaseConfigured, submitScoreRpc } from '../lib/supabase';
+import {
+  ensureAnonSession,
+  fetchTopScores,
+  isSupabaseConfigured,
+  submitScoreRpc,
+} from '../lib/supabase';
 import { loadSettings, saveSettings } from './storage';
 import type { QubitCount } from './types';
 
@@ -74,6 +79,11 @@ export async function submitScore(
   const name = sanitizeTag(tag);
   if (name.length === 0) return { ok: false, error: 'ENTER AN ARCADE TAG' };
   if (!isSupabaseConfigured()) return { ok: false, error: 'LINK DOWN' };
+  try {
+    await ensureAnonSession();
+  } catch {
+    return { ok: false, error: 'SIGN-IN FAILED' };
+  }
   try {
     await submitScoreRpc(name, level, moves, timeSeconds);
     saveTag(name);

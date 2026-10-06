@@ -12,10 +12,13 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react(), tailwindcss()],
-    define: {
-      'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(supabaseUrl),
-      'import.meta.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(supabaseAnonKey),
-    },
+    define:
+      mode === 'test'
+        ? {}
+        : {
+            'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(supabaseUrl),
+            'import.meta.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(supabaseAnonKey),
+          },
     test: {
       environment: 'node',
       include: ['src/**/*.test.ts'],
