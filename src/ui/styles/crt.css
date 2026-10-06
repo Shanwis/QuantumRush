@@ -563,6 +563,136 @@ body {
   color: var(--phosphor-dim);
 }
 
+.modal__submit {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.modal__sent {
+  margin: 0;
+  color: var(--phosphor);
+  text-shadow: 0 0 8px rgba(77, 255, 166, 0.5);
+}
+
+.modal__error {
+  margin: 0;
+  width: 100%;
+  color: var(--alert);
+}
+
+.tag-input {
+  width: 170px;
+  padding: 12px;
+  font-family: 'Press Start 2P', 'Courier New', monospace;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: var(--phosphor);
+  background: var(--void);
+  border: 3px solid var(--panel-edge);
+  text-transform: uppercase;
+}
+
+.tag-input:focus-visible {
+  outline: 3px solid var(--cyan);
+  outline-offset: 2px;
+}
+
+.leaderboard-columns {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  max-height: calc(100vh - 240px);
+}
+
+.leaderboard-col {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.leaderboard-scroll {
+  overflow-y: auto;
+  min-height: 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--phosphor-dim) var(--panel);
+}
+
+.leaderboard-row {
+  display: grid;
+  grid-template-columns: 46px 1fr auto;
+  gap: 4px 10px;
+  align-items: baseline;
+  padding: 6px 4px;
+  border-bottom: 2px dashed var(--panel-edge);
+}
+
+.leaderboard-rank {
+  color: var(--phosphor-dim);
+}
+
+.leaderboard-rank--top1 {
+  color: var(--amber);
+}
+
+.leaderboard-rank--top2 {
+  color: var(--cyan);
+}
+
+.leaderboard-rank--top3 {
+  color: var(--phosphor);
+}
+
+.leaderboard-name {
+  letter-spacing: 2px;
+}
+
+.leaderboard-score {
+  text-align: right;
+  color: var(--phosphor);
+  text-shadow: 0 0 8px rgba(77, 255, 166, 0.5);
+}
+
+.leaderboard-stats {
+  grid-column: 2 / -1;
+  text-align: right;
+  font-size: 16px;
+  color: var(--phosphor-dim);
+}
+
+.leaderboard-banner {
+  margin: 0;
+  padding: 8px 12px;
+  text-align: center;
+  letter-spacing: 2px;
+  color: var(--amber);
+  border: 2px dashed var(--amber);
+}
+
+.leaderboard-tabs {
+  display: none;
+  gap: 8px;
+}
+
+@media (max-width: 720px) {
+  .leaderboard-columns {
+    grid-template-columns: 1fr;
+    max-height: calc(100vh - 320px);
+  }
+
+  .leaderboard-col--hidden {
+    display: none;
+  }
+
+  .leaderboard-tabs {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+
 @keyframes bestBlink {
   0%,
   49% {

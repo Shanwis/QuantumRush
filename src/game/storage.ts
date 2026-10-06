@@ -9,6 +9,7 @@ export interface Bests {
 
 export interface Settings {
   themeOn: boolean;
+  tag: string | null;
 }
 
 const BESTS_KEY = 'qubit_rush_highscores';
@@ -51,10 +52,15 @@ export function recordScore(level: QubitCount, value: number): boolean {
 }
 
 export function loadSettings(): Settings {
-  const data = readJson(SETTINGS_KEY) as { v?: number; themeOn?: boolean } | null;
-  return { themeOn: data !== null && data.v === 2 ? data.themeOn === true : false };
+  const data = readJson(SETTINGS_KEY) as
+    | { v?: number; themeOn?: boolean; tag?: unknown }
+    | null;
+  return {
+    themeOn: data !== null && data.themeOn === true,
+    tag: data !== null && typeof data.tag === 'string' ? data.tag : null,
+  };
 }
 
 export function saveSettings(settings: Settings): void {
-  writeJson(SETTINGS_KEY, { v: 2, themeOn: settings.themeOn });
+  writeJson(SETTINGS_KEY, { v: 3, themeOn: settings.themeOn, tag: settings.tag });
 }

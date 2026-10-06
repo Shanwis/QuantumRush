@@ -38,7 +38,7 @@ export function unlockAudio(): void {
 
 export function setThemeEnabled(next: boolean): void {
   themeOn = next;
-  saveSettings({ themeOn: next });
+  saveSettings({ ...loadSettings(), themeOn: next });
   if (ctx === null) return;
   if (next) startTheme();
   else stopTheme();

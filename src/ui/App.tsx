@@ -5,12 +5,18 @@ import type { QubitCount } from '../game/types';
 import { CrtFrame } from './components/CrtFrame';
 import { ThemeToggle } from './components/ThemeToggle';
 import { GameScreen } from './GameScreen';
+import { LeaderboardScreen } from './LeaderboardScreen';
 import { MenuScreen } from './MenuScreen';
 import { TutorialScreen } from './TutorialScreen';
 
+type View =
+  | { view: 'menu' }
+  | { view: 'tutorial' }
+  | { view: 'leaderboard' }
+  | { view: 'play'; level: QubitCount };
+
 export function App() {
-  const [level, setLevel] = useState<QubitCount | null>(null);
-  const [tutorial, setTutorial] = useState(false);
+  const [screen, setScreen] = useState<View>({ view: 'menu' });
   const [bests, setBests] = useState<Bests>(loadBests);
   const [themeOn, setThemeOn] = useState(() => loadSettings().themeOn);
 
@@ -22,7 +28,7 @@ export function App() {
 
   const toggleTheme = useCallback(() => {
     setThemeOn((prev) => {
-      sfx("click");
+      sfx('click');
       const next = !prev;
       setThemeEnabled(next);
       return next;
@@ -33,37 +39,48 @@ export function App() {
     setBests(loadBests());
   }, []);
 
+  const click = () => sfx('click');
+  const goMenu = () => {
+    click();
+    setScreen({ view: 'menu' });
+  };
+  const goLeaderboard = () => {
+    click();
+    setScreen({ view: 'leaderboard' });
+  };
+
   return (
     <CrtFrame corner={<ThemeToggle themeOn={themeOn} onToggle={toggleTheme} />}>
-      {level !== null ? (
+      {screen.view === 'play' ? (
         <GameScreen
-          key={level}
-          level={level}
-          onExit={() => {
-            setLevel(null); 
-            sfx("click");
-          }}
+          key={screen.level}
+          level={screen.level}
+          onExit={goMenu}
           onScore={onScore}
+          onLeaderboard={goLeaderboard}
         />
-      ) : tutorial ? (
+      ) : screen.view === 'tutorial' ? (
         <TutorialScreen
-          onBack={() => {
-            setTutorial(false); 
-            sfx("click");
-          }}
-          onPlayLevel={(lv) => {
-            setTutorial(false);
-            setLevel(lv);
+          onBack={goMenu}
+          onPlayLevel={(level) => {
+            click();
+            setScreen({ view: 'play', level });
           }}
         />
+      ) : screen.view === 'leaderboard' ? (
+        <LeaderboardScreen onBack={goMenu} />
       ) : (
         <MenuScreen
           bests={bests}
-          onPlay={setLevel}
-          onTutorial={() => {
-            setTutorial(true); 
-            sfx("click");
+          onPlay={(level) => {
+            click();
+            setScreen({ view: 'play', level });
           }}
+          onTutorial={() => {
+            click();
+            setScreen({ view: 'tutorial' });
+          }}
+          onLeaderboard={goLeaderboard}
         />
       )}
     </CrtFrame>

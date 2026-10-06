@@ -6,9 +6,10 @@ export interface MenuScreenProps {
   bests: Bests;
   onPlay: (level: QubitCount) => void;
   onTutorial: () => void;
+  onLeaderboard: () => void;
 }
 
-export function MenuScreen({ bests, onPlay, onTutorial }: MenuScreenProps) {
+export function MenuScreen({ bests, onPlay, onTutorial, onLeaderboard }: MenuScreenProps) {
   return (
     <div className="menu flex flex-col items-center gap-6 py-8">
       <h1 className="menu__title pixel">QUBIT RUSH</h1>
@@ -19,6 +20,15 @@ export function MenuScreen({ bests, onPlay, onTutorial }: MenuScreenProps) {
         <span className="menu__coin">?</span>
       </div>
       <div className="flex w-full max-w-md flex-col items-stretch gap-4">
+        <button
+          className="btn btn--wide btn--amber"
+          onClick={() => {
+            onLeaderboard();
+            sfx("click");
+          }}
+        >
+          LEADERBOARD
+        </button>
         {PLAY_LEVELS.map((level) => (
           <button
             key={level}

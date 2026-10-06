@@ -6,6 +6,7 @@ test('menu offers all three levels and high scores', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByText('QUBIT RUSH')).toBeVisible();
   await expect(page.getByText('THE QUANTUM COIN GAME')).toBeVisible();
+  await expect(page.locator('.menu button').first()).toHaveText('LEADERBOARD');
   await expect(page.getByRole('button', { name: 'ONE COIN' })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'TWO COINS' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'THREE COINS' })).toBeVisible();

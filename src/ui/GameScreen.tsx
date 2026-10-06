@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { sfx } from '../audio/synth';
 import { generateChallenge, minimalSolution } from '../game/challenge';
+import { submitScore } from '../game/leaderboard';
 import { score } from '../game/scoring';
 import { recordScore } from '../game/storage';
 import { COIN_NAMES, LEVEL_LABELS, type QubitCount, opLabel } from '../game/types';
@@ -25,9 +26,10 @@ export interface GameScreenProps {
   level: QubitCount;
   onExit: () => void;
   onScore: (level: QubitCount, value: number) => void;
+  onLeaderboard: () => void;
 }
 
-export function GameScreen({ level, onExit, onScore }: GameScreenProps) {
+export function GameScreen({ level, onExit, onScore, onLeaderboard }: GameScreenProps) {
   const servedRef = useRef<string[]>([]);
   const makeChallenge = (rng: Rng) => {
     const challenge = generateChallenge(level, rng, servedRef.current);
@@ -169,6 +171,13 @@ export function GameScreen({ level, onExit, onScore }: GameScreenProps) {
           score={session.score}
           newBest={newBest}
           practice={practice}
+          onSubmit={async (tag) => {
+            const seconds = Math.floor(
+              ((session.endedAt ?? session.startedAt) - session.startedAt) / 1000,
+            );
+            return submitScore(tag, level, session.totalMoves, seconds);
+          }}
+          onLeaderboard={onLeaderboard}
           onNext={() => startNext(true)}
           onReplay={() => startNext(false)}
           onMenu={onExit}

@@ -11,6 +11,7 @@ test('replaying a challenge is practice and never sets a high score', async ({ p
 
   const dialog = page.getByRole('dialog');
   await expect(dialog).toContainText('NEW HIGH SCORE!');
+  await expect(dialog.getByRole('button', { name: 'SUBMIT SCORE' })).toBeVisible();
 
   await dialog.getByRole('button', { name: 'PLAY AGAIN' }).click();
   for (const op of challenge.solution) await applyOp(page, op);
@@ -18,4 +19,5 @@ test('replaying a challenge is practice and never sets a high score', async ({ p
 
   await expect(dialog).toContainText('(not considered for high score)');
   await expect(dialog).not.toContainText('NEW HIGH SCORE!');
+  await expect(dialog.getByRole('button', { name: 'SUBMIT SCORE' })).toHaveCount(0);
 });

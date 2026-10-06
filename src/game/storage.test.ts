@@ -58,18 +58,18 @@ describe('high score storage', () => {
     });
     expect(loadBests()).toEqual({ 1: null, 2: null, 3: null, 4: null });
     expect(recordScore(1, 500)).toBe(true);
-    expect(loadSettings()).toEqual({ themeOn: false });
-    expect(() => saveSettings({ themeOn: true })).not.toThrow();
+    expect(loadSettings()).toEqual({ themeOn: false, tag: null });
+    expect(() => saveSettings({ themeOn: true, tag: 'ACE' })).not.toThrow();
   });
 });
 
 describe('settings storage', () => {
-  it('defaults the theme to off and round-trips the flag', () => {
+  it('defaults the theme to off and round-trips theme and tag', () => {
     install(new FakeStorage());
-    expect(loadSettings()).toEqual({ themeOn: false });
-    saveSettings({ themeOn: true });
-    expect(loadSettings()).toEqual({ themeOn: true });
-    saveSettings({ themeOn: false });
-    expect(loadSettings()).toEqual({ themeOn: false });
+    expect(loadSettings()).toEqual({ themeOn: false, tag: null });
+    saveSettings({ themeOn: true, tag: 'ACE' });
+    expect(loadSettings()).toEqual({ themeOn: true, tag: 'ACE' });
+    saveSettings({ themeOn: false, tag: null });
+    expect(loadSettings()).toEqual({ themeOn: false, tag: null });
   });
 });
