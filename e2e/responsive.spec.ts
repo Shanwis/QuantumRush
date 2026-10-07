@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 
 test('menu and gameplay fit mobile and desktop widths', async ({ page }) => {
   for (const width of [390, 1280]) {

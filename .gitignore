@@ -4,3 +4,6 @@ test-results/
 playwright-report/
 .commandcode/
 *.log
+.env*
+!.env.example
+.vercel
