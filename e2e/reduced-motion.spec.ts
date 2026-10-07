@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 
 test('reduced motion swaps the flicker for a static coin', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });

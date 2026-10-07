@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 
 const moves = (page: import('@playwright/test').Page) =>
   page.locator('.hud__stat', { hasText: 'MOVES' }).locator('.hud__value');

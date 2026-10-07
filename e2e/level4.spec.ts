@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 import { applyOp, readChallenge, trackErrors } from './helpers';
 
 test('four coins are solved by canonical solution and the best persists', async ({ page }) => {

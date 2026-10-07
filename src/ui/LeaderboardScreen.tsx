@@ -18,7 +18,8 @@ export function LeaderboardScreen({ onBack }: { onBack: () => void }) {
   }, []);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="leaderboard-screen flex flex-col gap-4">
+      <div className="leaderboard-sweep" aria-hidden="true" />
       <header className="hud">
         <div className="hud__stat">
           <span className="hud__label">GLOBAL</span>
@@ -69,8 +70,11 @@ export function LeaderboardScreen({ onBack }: { onBack: () => void }) {
                   ) : (
                     data.byLevel[level].map((entry, index) => (
                       <div
-                        className="leaderboard-row"
+                        className={`leaderboard-row ${
+                          index < 3 ? `leaderboard-row--top${index + 1}` : ''
+                        }`}
                         key={`${entry.playerName}-${index}`}
+                        style={{ animationDelay: `${index * 60}ms` }}
                       >
                         <span
                           className={`leaderboard-rank ${

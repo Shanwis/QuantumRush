@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { loadTag, sanitizeTag } from '../../game/leaderboard';
+import { loadTag } from '../../game/leaderboard';
 
 export interface SuccessModalProps {
   timeText: string;
@@ -26,15 +26,14 @@ export function SuccessModal({
   onReplay,
   onMenu,
 }: SuccessModalProps) {
-  const [tag, setTag] = useState(loadTag);
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent'>('idle');
   const [error, setError] = useState('');
-  const cleanTag = sanitizeTag(tag);
+  const tag = loadTag();
 
   const submit = async () => {
     setStatus('sending');
     setError('');
-    const result = await onSubmit(cleanTag);
+    const result = await onSubmit(tag);
     if (result.ok) {
       setStatus('sent');
     } else {
@@ -75,17 +74,10 @@ export function SuccessModal({
           </div>
         ) : (
           <div className="modal__submit">
-            <input
-              className="tag-input"
-              value={tag}
-              maxLength={12}
-              placeholder="ARCADE TAG"
-              aria-label="Arcade tag"
-              onChange={(event) => setTag(sanitizeTag(event.target.value))}
-            />
+            <p className="modal__tag">ARCADE TAG: {tag}</p>
             <button
               className="btn"
-              disabled={status === 'sending' || cleanTag.length === 0}
+              disabled={status === 'sending' || tag.length === 0}
               onClick={submit}
             >
               SUBMIT SCORE

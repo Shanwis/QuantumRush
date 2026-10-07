@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 import { applyOp, readChallenge } from './helpers';
 
 test('shot noise alone never triggers a win', async ({ page }) => {

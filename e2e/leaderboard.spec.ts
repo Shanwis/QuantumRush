@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 
 test('leaderboard shows three level columns and an honest offline state', async ({ page }) => {
   await page.route('**/rest/v1/**', (route) => route.abort());

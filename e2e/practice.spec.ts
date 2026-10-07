@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 import { applyOp, readChallenge } from './helpers';
 
 test('replaying a challenge is practice and never sets a high score', async ({ page }) => {
@@ -12,6 +12,7 @@ test('replaying a challenge is practice and never sets a high score', async ({ p
   const dialog = page.getByRole('dialog');
   await expect(dialog).toContainText('NEW HIGH SCORE!');
   await expect(dialog.getByRole('button', { name: 'SUBMIT SCORE' })).toBeVisible();
+  await expect(dialog.getByRole('textbox')).toHaveCount(0);
 
   await dialog.getByRole('button', { name: 'PLAY AGAIN' }).click();
   for (const op of challenge.solution) await applyOp(page, op);
